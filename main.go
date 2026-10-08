@@ -4,13 +4,13 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"strconv"
 	"time"
 
+	"github.com/hellicopthecat/aisha_do_dot/users"
 	"github.com/joho/godotenv"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v5"
 	pg "github.com/lib/pq"
 )
 
@@ -59,11 +59,10 @@ func main() {
 	db := sql.OpenDB(c)
 	defer db.Close()
 
+	// App Use
+
 	// App Service
-	app.GET("/", func(ctx echo.Context) error {
-		log.Println("Hello")
-		return ctx.JSON(http.StatusOK, map[string]string{"hello": "world"})
-	})
+	users.InitUserModule(db)
 
 	// Initialized App
 	if err := app.Start(":8080"); err != nil {

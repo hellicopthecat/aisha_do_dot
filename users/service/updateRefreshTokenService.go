@@ -7,6 +7,6 @@ import (
 )
 
 func (s UserService) UpdateRefreshTokenService(ctx context.Context, dto dtos.UpdateRefreshToken) error {
-	err := s.UpdateRefreshTokenService(ctx, dto)
+	err := s.userService.UpdateRefreshTokenRepo(ctx, dto)
 	return err
 }

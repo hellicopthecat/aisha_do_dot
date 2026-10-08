@@ -7,11 +7,13 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	echojwt "github.com/labstack/echo-jwt/v5"
+	"github.com/labstack/echo/v5"
 )
 
-type accessClaims struct {
-	id    uuid.UUID
-	email string
+type AccessClaims struct {
+	Id    uuid.UUID `json:"id"`
+	Email string    `json:"email"`
 	jwt.RegisteredClaims
 }
 type refreshClaims struct {
@@ -32,7 +34,7 @@ func CreateJWTTokens(id uuid.UUID, email string, access bool) (*string, error) {
 }
 
 func createAccessToken(id uuid.UUID, email string) (*string, error) {
-	claims := &accessClaims{
+	claims := &AccessClaims{
 		id,
 		email,
 		jwt.RegisteredClaims{
@@ -63,8 +65,8 @@ func createRefreshToken() (*string, error) {
 	return &rt, nil
 }
 
-func ParseAccessToken(tokenString string) (*accessClaims, error) {
-	claims := new(accessClaims)
+func ParseAccessToken(tokenString string) (*AccessClaims, error) {
+	claims := new(AccessClaims)
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (any, error) {
 		if t.Method.Alg() != jwt.SigningMethodES256.Alg() {
 			return nil, fmt.Errorf("unexpected signing method :: %v", t.Header["alg"])
@@ -75,4 +77,13 @@ func ParseAccessToken(tokenString string) (*accessClaims, error) {
 		return nil, fmt.Errorf("invalid token :: %v", err)
 	}
 	return claims, nil
+}
+
+func EchoJwtConfig() echojwt.Config {
+	return echojwt.Config{
+		NewClaimsFunc: func(c *echo.Context) jwt.Claims {
+			return new(AccessClaims)
+		},
+		SigningKey: []byte(os.Getenv("JWT_ACCESS_SECRET")),
+	}
 }

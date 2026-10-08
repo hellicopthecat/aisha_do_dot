@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v5"
 )
 
-func (h UserHandler) FindUserByEmailHandler(e echo.Context) error {
+func (h UserHandler) FindUserByEmailHandler(e *echo.Context) error {
 	ctx := e.Request().Context()
 
 	email := e.QueryParam("email")
