@@ -11,6 +11,7 @@ import (
 	"github.com/hellicopthecat/aisha_do_dot/users"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v5"
+	"github.com/labstack/echo/v5/middleware"
 	pg "github.com/lib/pq"
 )
 
@@ -60,9 +61,17 @@ func main() {
 	defer db.Close()
 
 	// App Use
-
+	app.Use(middleware.RequestLogger())
+	app.Use(middleware.Recover())
+	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"http://localhost:8080", "http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTION"},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAuthorization},
+		AllowCredentials: true,
+	}))
+	app.Use(middleware.CSRF())
 	// App Service
-	users.InitUserModule(db)
+	users.InitUserModule(db).UserGroupApi(app)
 
 	// Initialized App
 	if err := app.Start(":8080"); err != nil {
