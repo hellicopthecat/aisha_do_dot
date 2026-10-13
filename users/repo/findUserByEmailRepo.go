@@ -8,7 +8,7 @@ import (
 )
 
 func (r UserRepo) FindUserByEmailRepo(ctx context.Context, email string) (*string, error) {
-	file, err := os.ReadFile("db/ddls/user/find_user_by_email.sql")
+	file, err := os.ReadFile("db/ddls/user/findUserByEmail.sql")
 	if err != nil {
 		return nil, err
 	}

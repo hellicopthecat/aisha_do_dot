@@ -8,8 +8,8 @@ import (
 	"github.com/hellicopthecat/aisha_do_dot/users/entity"
 )
 
-func (r UserRepo) CreateUserRepo(ctx context.Context, userEntity entity.User) error {
-	file, err := os.ReadFile("db/ddls/user/create_user.sql")
+func (r UserRepo) CreateUserRepo(ctx context.Context, userEntity *entity.User) error {
+	file, err := os.ReadFile("db/ddls/user/createUser.sql")
 	if err != nil {
 		return err
 	}
