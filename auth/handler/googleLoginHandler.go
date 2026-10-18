@@ -30,6 +30,6 @@ func (h AuthHandler) GoogleLoginHandler(e *echo.Context) error {
 	params.Set("scope", "email openid profile")
 	params.Set("state", uid)
 
-	loginUrl := "https://accounts.google.com/o/oauth2/v2/auth" + params.Encode()
+	loginUrl := "https://accounts.google.com/o/oauth2/v2/auth?" + params.Encode()
 	return e.Redirect(http.StatusFound, loginUrl)
 }

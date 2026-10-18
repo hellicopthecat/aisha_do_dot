@@ -6,6 +6,6 @@ type UserRepo struct {
 	db *sql.DB
 }
 
-func InitUserRepo(db *sql.DB) UserRepo {
-	return UserRepo{db: db}
+func InitUserRepo(db *sql.DB) *UserRepo {
+	return &UserRepo{db: db}
 }

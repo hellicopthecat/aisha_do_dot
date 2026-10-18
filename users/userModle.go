@@ -12,7 +12,7 @@ import (
 )
 
 type UserModule struct {
-	userHandler handler.UserHandler
+	userHandler *handler.UserHandler
 }
 
 func InitUserModule(db *sql.DB) *UserModule {

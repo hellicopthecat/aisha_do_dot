@@ -6,6 +6,6 @@ type UserService struct {
 	userService *repo.UserRepo
 }
 
-func InitUserService(db repo.UserRepo) UserService {
-	return UserService{userService: &db}
+func InitUserService(db *repo.UserRepo) *UserService {
+	return &UserService{userService: db}
 }

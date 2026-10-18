@@ -9,7 +9,7 @@ import (
 )
 
 func (r UserRepo) CreateUserRepo(ctx context.Context, userEntity *entity.User) error {
-	file, err := os.ReadFile("db/ddls/user/createUser.sql")
+	file, err := os.ReadFile("db/ddls/users/createUser.sql")
 	if err != nil {
 		return err
 	}

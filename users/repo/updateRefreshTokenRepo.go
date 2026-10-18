@@ -9,7 +9,7 @@ import (
 )
 
 func (r UserRepo) UpdateRefreshTokenRepo(ctx context.Context, dto dtos.UpdateRefreshToken) error {
-	file, err := os.ReadFile("db/ddls/user/updateRefreshToken.sql")
+	file, err := os.ReadFile("db/ddls/users/updateRefreshToken.sql")
 	if err != nil {
 		return err
 	}

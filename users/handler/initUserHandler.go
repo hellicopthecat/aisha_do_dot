@@ -6,6 +6,6 @@ type UserHandler struct {
 	userHandler *service.UserService
 }
 
-func InitUserHandler(service service.UserService) UserHandler {
-	return UserHandler{userHandler: &service}
+func InitUserHandler(service *service.UserService) *UserHandler {
+	return &UserHandler{userHandler: service}
 }

@@ -1,6 +1,6 @@
 SELECT
   id
 FROM
-  user
+  users
 WHERE
   email = $1;

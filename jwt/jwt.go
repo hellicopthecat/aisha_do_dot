@@ -25,9 +25,9 @@ var (
 	refreshSecret = []byte(os.Getenv("JWT_REFRESH_SECRET"))
 )
 
-func CreateJWTTokens(id uuid.UUID, email string, access bool) (*string, error) {
+func CreateJWTTokens(id *uuid.UUID, email *string, access bool) (*string, error) {
 	if access {
-		return createAccessToken(id, email)
+		return createAccessToken(*id, *email)
 	} else {
 		return createRefreshToken()
 	}

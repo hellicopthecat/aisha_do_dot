@@ -1,13 +1,20 @@
 package handler
 
-import "github.com/hellicopthecat/aisha_do_dot/users/service"
+import (
+	authService "github.com/hellicopthecat/aisha_do_dot/auth/service"
+	userService "github.com/hellicopthecat/aisha_do_dot/users/service"
+)
 
 type AuthHandler struct {
-	authHandler service.UserService
+	userHandler *userService.UserService
+	authHandler *authService.AuthService
 }
 
-func InitAuthHandler(userService service.UserService) *AuthHandler {
+func InitAuthHandler(
+	authService *authService.AuthService,
+	userService *userService.UserService) *AuthHandler {
 	return &AuthHandler{
-		authHandler: userService,
+		userHandler: userService,
+		authHandler: authService,
 	}
 }

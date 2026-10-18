@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -56,7 +55,7 @@ func (h AuthHandler) GoogleLoginResponseHandler(e *echo.Context) error {
 		SameSite: http.SameSiteLaxMode,
 	})
 
-	if stateCookie.Value != stateParam {
+	if stateParam == "" || stateCookie.Value != stateParam {
 		return e.JSON(http.StatusBadRequest, map[string]string{
 			"STATUS":  "FAILED",
 			"MESSAGE": "잘못된 요청입니다.",
@@ -156,7 +155,7 @@ func (h AuthHandler) GoogleLoginResponseHandler(e *echo.Context) error {
 			"MESSAGE": "Google 사용자 정보 서버에 연결하지 못했습니다..",
 		})
 	}
-	defer userReq.Body.Close()
+	defer userRes.Body.Close()
 
 	if userRes.StatusCode != http.StatusOK {
 		return e.JSON(http.StatusBadGateway, map[string]string{
@@ -181,21 +180,42 @@ func (h AuthHandler) GoogleLoginResponseHandler(e *echo.Context) error {
 	}
 
 	// 유저 찾기
-	email, err := h.authHandler.FindUserByEmailService(ctx, userResponse.Email)
+	existUserId, err := h.userHandler.GetUserIdByEmailService(ctx, userResponse.Email)
 
-	// user 없으면 생성 로그인
+	if err != nil {
+		e.Logger().Error("회원 조회 에러 :: ", "error", err)
+		return e.JSON(http.StatusInternalServerError, map[string]string{
+			"STATUS":  "FAILED",
+			"MESSAGE": "회원 조회에 실패했습니다.",
+		})
+	}
+	isNewUser := existUserId == nil
+	var uid uuid.UUID
+	if isNewUser {
+		uid = uuid.New()
+	} else {
+		uid = *existUserId
+	}
+
 	// token들 생성
-	if err == nil && email == nil {
-		uid, _ := uuid.NewUUID()
-		rt, err := setCookies(uid, userResponse.Email, e)
+	at, err := jwt.CreateJWTTokens(&uid, &userResponse.Email, true)
+	if err != nil {
+		return e.JSON(http.StatusInternalServerError, map[string]string{
+			"STATUS":  "FAILED",
+			"MESSAGE": "토큰 생성에 실패했습니다. -1",
+		})
+	}
 
-		if err != nil {
-			return e.JSON(http.StatusUnauthorized, map[string]string{
-				"STATUS":  "FAILED",
-				"MESSAGE": "토큰 등록에 실패하였습니다.",
-			})
-		}
+	rt, err := jwt.CreateJWTTokens(nil, nil, false)
+	if err != nil {
+		return e.JSON(http.StatusInternalServerError, map[string]string{
+			"STATUS":  "FAILED",
+			"MESSAGE": "토큰 생성에 실패했습니다. -2",
+		})
+	}
 
+	if isNewUser {
+		// user 없으면 회원가입
 		user := &entity.User{
 			Id:            uid,
 			Email:         userResponse.Email,
@@ -204,71 +224,41 @@ func (h AuthHandler) GoogleLoginResponseHandler(e *echo.Context) error {
 			Name:          userResponse.Name,
 			Refresh_token: *rt,
 		}
-		h.authHandler.CreateUserSerivce(ctx, user)
-	}
-	// 있으면 그냥 로그인
-	if err == nil && email != nil {
-		uid, err := h.authHandler.GetUserIdByEmailService(ctx, *email)
-
+		if err := h.userHandler.CreateUserSerivce(ctx, user); err != nil {
+			return e.JSON(http.StatusInternalServerError, map[string]string{
+				"STATUS":  "FAILED",
+				"MESSAGE": "회원가입에 실패했습니다.",
+			})
+		}
+	} else { // 있으면 그냥 로그인
 		if err != nil {
 			return e.JSON(http.StatusInternalServerError, map[string]string{
 				"STATUS":  "FAILED",
 				"MESSAGE": "사용자정보를 읽어오는데 실패했습니다.",
 			})
 		}
-		if uid.String() == "" {
+		if existUserId == nil || *existUserId == uuid.Nil {
 			return e.JSON(http.StatusBadRequest, map[string]string{
 				"STATUS":  "FAILED",
 				"MESSAGE": "존재하지 않는 사용자입니다..",
 			})
 		}
 
-		rt, err := setCookies(*uid, userResponse.Email, e)
-		if err != nil {
+		dto := dtos.UpdateRefreshToken{
+			Id:            *existUserId,
+			Refresh_token: *rt,
+		}
+
+		if err := h.userHandler.UpdateRefreshTokenService(ctx, dto); err != nil {
 			return e.JSON(http.StatusUnauthorized, map[string]string{
 				"STATUS":  "FAILED",
-				"MESSAGE": "토큰 등록에 실패하였습니다.",
+				"MESSAGE": "로그인에 실패했습니다.",
 			})
 		}
 
-		dto := dtos.UpdateRefreshToken{
-			Id:            *uid,
-			Refresh_token: *rt,
-		}
-		h.authHandler.UpdateRefreshTokenService(ctx, dto)
-
 	}
+
+	setCookies(*at, *rt, e)
+
 	return e.Redirect(http.StatusFound, "http://localhost:3000")
-}
-
-func setCookies(uid uuid.UUID, email string, e *echo.Context) (*string, error) {
-	at, err := jwt.CreateJWTTokens(uid, email, true)
-	if err != nil {
-		return nil, fmt.Errorf("토큰생성에 실패했습니다. :: %v", err)
-	}
-
-	rt, err := jwt.CreateJWTTokens(uid, email, false)
-	if err != nil {
-		return nil, fmt.Errorf("토큰생성에 실패했습니다. :: %v", err)
-	}
-
-	e.SetCookie(&http.Cookie{
-		Name:     "access_token",
-		Value:    *at,
-		Path:     "/",
-		MaxAge:   60 * 60 * 24 * 3,
-		HttpOnly: true,
-		Secure:   false, // 배포시 true
-		SameSite: http.SameSiteLaxMode,
-	})
-	e.SetCookie(&http.Cookie{
-		Name:     "refresh_token",
-		Value:    *rt,
-		Path:     "/",
-		MaxAge:   60 * 60 * 24 * 7,
-		HttpOnly: true,
-		Secure:   false, // 배포시 true
-		SameSite: http.SameSiteLaxMode,
-	})
-	return rt, nil
 }

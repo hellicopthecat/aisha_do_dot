@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/hellicopthecat/aisha_do_dot/auth"
 	"github.com/hellicopthecat/aisha_do_dot/users"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v5"
@@ -36,7 +37,9 @@ func main() {
 			Port:           5432,
 			User:           "root",
 			Password:       "1111",
+			Database:       os.Getenv("DATABASE_NAME"),
 			ConnectTimeout: 5 * time.Second,
+			SSLMode:        "disable",
 		}
 	} else {
 		// db connect
@@ -50,7 +53,9 @@ func main() {
 			Port:           uint16(num),
 			User:           os.Getenv("DATABASE_USER"),
 			Password:       os.Getenv("DATABASE_PW"),
+			Database:       os.Getenv("DATABASE_NAME"),
 			ConnectTimeout: 5 * time.Second,
+			SSLMode:        "require",
 		}
 	}
 	c, err := pg.NewConnectorConfig(cfg)
@@ -70,8 +75,10 @@ func main() {
 		AllowCredentials: true,
 	}))
 	app.Use(middleware.CSRF())
+
 	// App Service
 	users.InitUserModule(db).UserGroupApi(app)
+	auth.InitAuthModule(db).AuthGroupApi(app)
 
 	// Initialized App
 	if err := app.Start(":8080"); err != nil {
