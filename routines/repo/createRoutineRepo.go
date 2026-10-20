@@ -4,29 +4,24 @@ import (
 	"context"
 	"os"
 
-	"github.com/hellicopthecat/aisha_do_dot/routines/entity"
+	"github.com/hellicopthecat/aisha_do_dot/routines/dtos"
 )
 
-func (r RoutineRepo) CreateRoutineRepo(ctx context.Context, routine *entity.Routine) error {
+func (r *RoutineRepo) CreateRoutineRepo(ctx context.Context, dto dtos.CreateRoutineDto) error {
 	file, err := os.ReadFile("db/ddls/routines/createRoutine.sql")
 	if err != nil {
 		return err
 	}
-	tx, err := r.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
 
-	result, err := tx.ExecContext(ctx, string(file),
-		routine.Id,
-		routine.Owner.Email,
-		routine.Owner.Email,
-		routine.Routine_Title,
-		routine.Routine_Desc,
-		routine.Priority_One_Depth,
-		routine.Category,
-		routine.Owner.Id,
+	result, err := r.db.ExecContext(ctx, string(file),
+		dto.Id,
+		dto.Email,
+		dto.Email,
+		dto.Routine_Title,
+		dto.Routine_Desc,
+		dto.Priority_One_Depth,
+		dto.Category,
+		dto.Owner_Id,
 	)
 
 	if err != nil {
@@ -41,5 +36,5 @@ func (r RoutineRepo) CreateRoutineRepo(ctx context.Context, routine *entity.Rout
 		return err
 	}
 
-	return tx.Commit()
+	return err
 }
