@@ -2,18 +2,20 @@ package repo
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"os"
 
 	"github.com/hellicopthecat/aisha_do_dot/routines/dtos"
 )
 
-func (r *RoutineRepo) CreateRoutineRepo(ctx context.Context, dto dtos.CreateRoutineDto) error {
+func (r *RoutineRepo) CreateRoutineRepo(ctx context.Context, tx *sql.Tx, dto dtos.CreateRoutineDto) error {
 	file, err := os.ReadFile("db/ddls/routines/createRoutine.sql")
 	if err != nil {
 		return err
 	}
 
-	result, err := r.db.ExecContext(ctx, string(file),
+	result, err := tx.ExecContext(ctx, string(file),
 		dto.Id,
 		dto.Email,
 		dto.Email,
@@ -33,7 +35,7 @@ func (r *RoutineRepo) CreateRoutineRepo(ctx context.Context, dto dtos.CreateRout
 		return err
 	}
 	if affect != 1 {
-		return err
+		return fmt.Errorf("생성되지 않았습니다. %d", affect)
 	}
 
 	return err

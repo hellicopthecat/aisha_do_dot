@@ -10,7 +10,7 @@ type CreateRoutineDto struct {
 	Email              string
 	Routine_Title      string
 	Routine_Desc       string
-	Priority_One_Depth enums.OneDepth
-	Category           string
+	Priority_One_Depth int64
+	Category           enums.OneDepth
 	Owner_Id           uuid.UUID
 }

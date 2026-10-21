@@ -14,12 +14,12 @@ func (s *RoutineService) CreateRoutineService(ctx context.Context, createRoutine
 	}
 	defer tx.Rollback()
 
-	err = s.routineRepo.CreateRoutineRepo(ctx, createRoutineDto)
+	err = s.routineRepo.CreateRoutineRepo(ctx, tx, createRoutineDto)
 	if err != nil {
 		return err
 	}
 
-	err = s.accessRepo.CreateRoutineAccessRepo(ctx, createAccessDto)
+	err = s.accessRepo.CreateRoutineAccessRepoWithTx(ctx, tx, createAccessDto)
 	if err != nil {
 		return err
 	}
