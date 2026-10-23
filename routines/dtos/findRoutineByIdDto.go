@@ -7,7 +7,7 @@ import (
 	"github.com/hellicopthecat/aisha_do_dot/commons/enums"
 )
 
-type FindRoutineById struct {
+type FindRoutineByIdDto struct {
 	Id                 uuid.UUID      //id
 	Created_At         time.Time      //created_at
 	Updated_At         time.Time      //updated_at
@@ -15,7 +15,7 @@ type FindRoutineById struct {
 	Updated_By         string         //updated_by
 	Routine_Title      string         //routine_title
 	Routine_Desc       *string        //routine_desc
-	Priority_One_Depth *int           //priorityOneDepth
+	Priority_One_Depth *int           //priority_one_depth
 	Category           enums.OneDepth //category
 	User_Id            uuid.UUID      //user_id
 }

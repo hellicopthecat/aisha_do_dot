@@ -9,12 +9,12 @@ import (
 	"github.com/hellicopthecat/aisha_do_dot/routines/dtos"
 )
 
-func (r *RoutineRepo) FindRoutineByIdRepo(ctx context.Context, id uuid.UUID) (*dtos.FindRoutineById, error) {
+func (r *RoutineRepo) FindRoutineByIdRepo(ctx context.Context, id uuid.UUID) (*dtos.FindRoutineByIdDto, error) {
 	file, err := os.ReadFile("db/ddls/routines/findRoutineById.sql")
 	if err != nil {
 		return nil, err
 	}
-	var routine dtos.FindRoutineById
+	var routine dtos.FindRoutineByIdDto
 	err = r.db.QueryRowContext(ctx, string(file), id).Scan(
 		&routine.Id,
 		&routine.Created_At,

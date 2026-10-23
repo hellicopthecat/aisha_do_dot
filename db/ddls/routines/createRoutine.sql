@@ -6,7 +6,7 @@ INSERT INTO routines (
   updated_by,
   routine_title,
   routine_desc,
-  priorityOneDepth,
+  priority_one_depth,
   category,
   user_id
 ) VALUES (
@@ -17,7 +17,7 @@ INSERT INTO routines (
   $3, -- updated_by
   $4, -- routine_title
   $5, -- routine_desc
-  $6, -- priorityOneDepth
+  $6, -- priority_one_depth
   $7, -- category
   $8 -- user_id
 );

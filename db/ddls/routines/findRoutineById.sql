@@ -1,15 +1,18 @@
 SELECT
-  id,
-  created_at,
-  updated_at,
-  created_by,
-  updated_by,
-  routine_title,
-  routine_desc,
-  priorityOneDepth,
-  category,
-  user_id
+  r.id,
+  r.created_at,
+  r.updated_at,
+  r.created_by,
+  r.updated_by,
+  r.routine_title,
+  r.routine_desc,
+  r.priority_one_depth,
+  r.category,
+  r.user_id
 FROM
-  routines
+  routines r
+LEFT JOIN
+  routine_access ra
+  ON r.id = ra.routine_id
 WHERE
   id = $1;

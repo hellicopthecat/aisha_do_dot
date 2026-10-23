@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS "routines" (
   "updated_by" TEXT,
   "routine_title" TEXT NOT NULL,
   "routine_desc" TEXT,
-  "priorityOneDepth" integer,
+  "priority_one_depth" integer,
   "category" one_depth_enums,
   "user_id" uuid
 );
