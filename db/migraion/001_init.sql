@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS "routines_detail" (
   "updated_at" TIMESTAMPTZ,
   "created_by" TEXT,
   "updated_by" TEXT,
-  "priorityTwoDepth" integer,
+  "priority_two_depth" integer,
   "pre_event_start_at" TIMESTAMPTZ NOT NULL,
   "pre_event_end_at" TIMESTAMPTZ NOT NULL,
   "start_at" TIMESTAMPTZ NOT NULL,
@@ -69,11 +69,11 @@ CREATE TABLE IF NOT EXISTS "routines_detail_desc" (
   "updated_at" TIMESTAMPTZ,
   "created_by" TEXT,
   "updated_by" TEXT,
-  "desc" TEXT NOT NULL,
+  "detail_desc" TEXT NOT NULL,
   "routine_detail_id" uuid
 );
 
-CREATE TABLE IF NOT EXISTS "routine_detail_tags" (
+CREATE TABLE IF NOT EXISTS "routines_detail_tags" (
   "id" uuid PRIMARY KEY,
   "created_at" TIMESTAMPTZ,
   "updated_at" TIMESTAMPTZ,
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS "routine_detail_tags" (
   "routine_detail_id" uuid
 );
 
-CREATE TABLE IF NOT EXISTS "routine_access" (
+CREATE TABLE IF NOT EXISTS "routines_access" (
   "id" uuid PRIMARY KEY,
   "created_at" TIMESTAMPTZ,
   "updated_at" TIMESTAMPTZ,
@@ -101,8 +101,8 @@ ALTER TABLE "routines_detail" ADD FOREIGN KEY ("routine_id") REFERENCES "routine
 
 ALTER TABLE "routines_detail_desc" ADD FOREIGN KEY ("routine_detail_id") REFERENCES "routines_detail" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-ALTER TABLE "routine_detail_tags" ADD FOREIGN KEY ("routine_detail_id") REFERENCES "routines_detail" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "routines_detail_tags" ADD FOREIGN KEY ("routine_detail_id") REFERENCES "routines_detail" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-ALTER TABLE "routine_access" ADD FOREIGN KEY ("routine_id") REFERENCES "routines" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "routines_access" ADD FOREIGN KEY ("routine_id") REFERENCES "routines" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-ALTER TABLE "routine_access" ADD FOREIGN KEY ("access_user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "routines_access" ADD FOREIGN KEY ("access_user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;

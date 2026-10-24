@@ -3,8 +3,8 @@ package service
 import (
 	"database/sql"
 
-	accessRepo "github.com/hellicopthecat/aisha_do_dot/routine_access/repo"
 	routineRepo "github.com/hellicopthecat/aisha_do_dot/routines/repo"
+	accessRepo "github.com/hellicopthecat/aisha_do_dot/routines_access/repo"
 )
 
 type RoutineService struct {

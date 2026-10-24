@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hellicopthecat/aisha_do_dot/routine_access/dtos"
+	"github.com/hellicopthecat/aisha_do_dot/routines_access/dtos"
 )
 
 func (r *RoutineAccessRepo) CreateRoutineAccessRepo(ctx context.Context, dto dtos.CreateRoutineAccessDto) error {

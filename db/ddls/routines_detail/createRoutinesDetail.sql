@@ -1,5 +1,25 @@
 INSERT INTO routines_detail(
-  
+  id, 
+  created_at, 
+  updated_at, 
+  created_by, 
+  updated_by, 
+  priority_two_depth, 
+  pre_event_start_at, 
+  pre_event_end_at, 
+  start_at, 
+  end_at, 
+  routine_id, 
 ) VALUES (
-  
+  $1,
+  NOW(),
+  NOW(),
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7,
+  $8,
+  $9
 );

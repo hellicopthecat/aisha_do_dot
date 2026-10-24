@@ -18,4 +18,13 @@ type FindRoutineByIdDto struct {
 	Priority_One_Depth *int           //priority_one_depth
 	Category           enums.OneDepth //category
 	User_Id            uuid.UUID      //user_id
+	User_Email         string
+	User_Name          string
+	Access_User        []FindRoutineByIdAccessDto
+}
+
+type FindRoutineByIdAccessDto struct {
+	Can_Access     enums.Access     `json:"can_access"`
+	Editable       enums.AccessRole `json:"editable"`
+	Access_User_Id uuid.UUID        `json:"access_user_id"`
 }

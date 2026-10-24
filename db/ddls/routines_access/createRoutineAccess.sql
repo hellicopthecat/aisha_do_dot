@@ -1,4 +1,4 @@
-INSERT INTO routine_access (
+INSERT INTO routines_access (
   id,
   created_at,
   updated_at,

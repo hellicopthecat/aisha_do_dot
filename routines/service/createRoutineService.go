@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	accessDto "github.com/hellicopthecat/aisha_do_dot/routine_access/dtos"
 	routineDto "github.com/hellicopthecat/aisha_do_dot/routines/dtos"
+	accessDto "github.com/hellicopthecat/aisha_do_dot/routines_access/dtos"
 )
 
 func (s *RoutineService) CreateRoutineService(ctx context.Context, createRoutineDto routineDto.CreateRoutineDto, createAccessDto accessDto.CreateRoutineAccessDto) error {

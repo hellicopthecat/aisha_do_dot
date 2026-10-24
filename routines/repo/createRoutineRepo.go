@@ -38,5 +38,5 @@ func (r *RoutineRepo) CreateRoutineRepo(ctx context.Context, tx *sql.Tx, dto dto
 		return fmt.Errorf("생성되지 않았습니다. %d", affect)
 	}
 
-	return err
+	return nil
 }

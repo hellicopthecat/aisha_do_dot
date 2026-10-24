@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"os"
 
 	"github.com/google/uuid"
@@ -15,6 +16,7 @@ func (r *RoutineRepo) FindRoutineByIdRepo(ctx context.Context, id uuid.UUID) (*d
 		return nil, err
 	}
 	var routine dtos.FindRoutineByIdDto
+	var accessUsersJSON []byte
 	err = r.db.QueryRowContext(ctx, string(file), id).Scan(
 		&routine.Id,
 		&routine.Created_At,
@@ -26,11 +28,18 @@ func (r *RoutineRepo) FindRoutineByIdRepo(ctx context.Context, id uuid.UUID) (*d
 		&routine.Priority_One_Depth,
 		&routine.Category,
 		&routine.User_Id,
+		&routine.User_Email,
+		&routine.User_Name,
+		&accessUsersJSON,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
+		return nil, err
+	}
+
+	if err := json.Unmarshal(accessUsersJSON, &routine.Access_User); err != nil {
 		return nil, err
 	}
 	return &routine, nil
