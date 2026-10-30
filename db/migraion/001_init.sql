@@ -106,3 +106,7 @@ ALTER TABLE "routines_detail_tags" ADD FOREIGN KEY ("routine_detail_id") REFEREN
 ALTER TABLE "routines_access" ADD FOREIGN KEY ("routine_id") REFERENCES "routines" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "routines_access" ADD FOREIGN KEY ("access_user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE INDEX idx_routines_access_allowed_user_routine
+ON routines_access (access_user_id, routine_id)
+WHERE can_access = 'ACCESS';

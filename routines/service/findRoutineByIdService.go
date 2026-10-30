@@ -9,8 +9,8 @@ import (
 	"github.com/hellicopthecat/aisha_do_dot/routines/dtos"
 )
 
-func (r *RoutineService) FindRoutineByIdService(ctx context.Context, user_id uuid.UUID, routine_id uuid.UUID) (*dtos.FindRoutineByIdDto, error) {
-	routine, err := r.routineRepo.FindRoutineByIdRepo(ctx, routine_id)
+func (s *RoutineService) FindRoutineByIdService(ctx context.Context, user_id uuid.UUID, routine_id uuid.UUID) (*dtos.FindRoutineByIdDto, error) {
+	routine, err := s.routineRepo.FindRoutineByIdRepo(ctx, routine_id)
 	if err != nil {
 		return nil, err
 	}

@@ -8,7 +8,7 @@ import (
 	"github.com/hellicopthecat/aisha_do_dot/routines/dtos"
 )
 
-func (r RoutineRepo) FindMyRoutineByUserIdRepo(ctx context.Context, userId uuid.UUID) ([]dtos.FindMyRoutineByUserIdDto, error) {
+func (r RoutineRepo) FindMyRoutineByUserIdRepo(ctx context.Context, userId uuid.UUID) (*[]dtos.FindMyRoutineByUserIdDto, error) {
 	file, err := os.ReadFile("db/ddls/routines/findMyRoutineByUserId.sql")
 	if err != nil {
 		return nil, err
@@ -45,5 +45,5 @@ func (r RoutineRepo) FindMyRoutineByUserIdRepo(ctx context.Context, userId uuid.
 		return nil, err
 	}
 
-	return routines, nil
+	return &routines, nil
 }
