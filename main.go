@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/hellicopthecat/aisha_do_dot/auth"
+	"github.com/hellicopthecat/aisha_do_dot/routines"
 	"github.com/hellicopthecat/aisha_do_dot/users"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v5"
@@ -79,6 +80,7 @@ func main() {
 	// App Service
 	users.InitUserModule(db).UserGroupApi(app)
 	auth.InitAuthModule(db).AuthGroupApi(app)
+	routines.InitRoutineModule(db).RoutineGroupApi(app)
 
 	// Initialized App
 	if err := app.Start(":8080"); err != nil {

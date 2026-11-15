@@ -6,6 +6,6 @@ type RoutineAccessRepo struct {
 	db *sql.DB
 }
 
-func (r RoutineAccessRepo) InitRoutineAccess(db *sql.DB) *RoutineAccessRepo {
+func InitRoutineAccess(db *sql.DB) *RoutineAccessRepo {
 	return &RoutineAccessRepo{db: db}
 }

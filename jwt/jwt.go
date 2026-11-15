@@ -20,10 +20,13 @@ type refreshClaims struct {
 	jwt.RegisteredClaims
 }
 
-var (
-	accessSecret  = []byte(os.Getenv("JWT_ACCESS_SECRET"))
-	refreshSecret = []byte(os.Getenv("JWT_REFRESH_SECRET"))
-)
+func accessSecretKey() []byte {
+	return []byte(os.Getenv("JWT_ACCESS_SECRET"))
+}
+
+func refreshSecretKey() []byte {
+	return []byte(os.Getenv("JWT_REFRESH_SECRET"))
+}
 
 func CreateJWTTokens(id *uuid.UUID, email *string, access bool) (*string, error) {
 	if access {
@@ -43,7 +46,7 @@ func createAccessToken(id uuid.UUID, email string) (*string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	at, err := token.SignedString(accessSecret)
+	at, err := token.SignedString(accessSecretKey())
 	if err != nil {
 		return nil, fmt.Errorf("Access Token 발행에 실패했습니다. :: %v", err)
 	}
@@ -58,7 +61,7 @@ func createRefreshToken() (*string, error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	rt, err := token.SignedString(refreshSecret)
+	rt, err := token.SignedString(refreshSecretKey())
 	if err != nil {
 		return nil, fmt.Errorf("Refresh Token 발행에 실패했습니다. :: %v", err)
 	}
@@ -68,10 +71,10 @@ func createRefreshToken() (*string, error) {
 func ParseAccessToken(tokenString string) (*AccessClaims, error) {
 	claims := new(AccessClaims)
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (any, error) {
-		if t.Method.Alg() != jwt.SigningMethodES256.Alg() {
+		if t.Method.Alg() != jwt.SigningMethodHS256.Alg() {
 			return nil, fmt.Errorf("unexpected signing method :: %v", t.Header["alg"])
 		}
-		return accessSecret, nil
+		return accessSecretKey(), nil
 	})
 	if err != nil || !token.Valid {
 		return nil, fmt.Errorf("invalid token :: %v", err)
@@ -84,6 +87,6 @@ func EchoJwtConfig() echojwt.Config {
 		NewClaimsFunc: func(c *echo.Context) jwt.Claims {
 			return new(AccessClaims)
 		},
-		SigningKey: []byte(os.Getenv("JWT_ACCESS_SECRET")),
+		SigningKey: accessSecretKey(),
 	}
 }
